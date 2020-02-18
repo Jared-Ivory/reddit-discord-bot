@@ -26,24 +26,24 @@ client.once('ready', () => {
 
 client.on('message', message => {
     //log the direct message recieved
-    console.log(message.content);
+    console.log(`${message.channel.name.toUpperCase()}~${message.author.username}: ${message}`);
 
-    let {commandName, args} = parseMessage(message)
+    //If the message is from the bot break;
+    if(!message.content.startsWith(prefix) || message.author.bot) return;
 
-    handleCommand(commandName, args);
+    let {commandName, args} = parseMessage(message);
+    handleCommand(message, commandName, args);
 });
 
 
 function parseMessage(message){
-    if(!message.content.startsWith(prefix) || message.author.bot) return;
-
     //Message is seperated into its command and arguments passed.
     const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
-    return commandName, args;
+    return {commandName, args};
 }
 
-function handleCommand(commandName, args){
+function handleCommand(message, commandName, args){
     //If our collection of commands contains the passed command execute its function
     if(!client.commands.has(commandName)) return;
     const command = client.commands.get(commandName);
